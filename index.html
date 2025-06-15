@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wild Lands - React Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Rye&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-bg: #f4f1ea;
+            --ink-main: #3a3a3a;
+            --ink-secondary: #5c5c5c;
+            --border-color: #b0a69a;
+            --blood-red: #8a0303;
+            --faded-blue: #4a6b8a;
+            --tarnished-gold: #c8a415;
+            --faded-green: #556b2f;
+            --scarlet-fever-color: #C71585; /* MediumVioletRed */
+            --puke-yellow: #BDB76B; /* DarkKhaki for generic illness */
+        }
+
+        body { 
+            background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+            background-color: #3e2723;
+            color: var(--paper-bg); 
+            font-family: 'Merriweather', serif; 
+            overscroll-behavior-y: contain; 
+        }
+
+        .font-western { font-family: 'Rye', cursive; }
+        .font-pulp-title { font-family: 'Special Elite', monospace; }
+        
+       
+        @keyframes player-flash-bg-red {
+            0%, 100% { background-color: rgba(244, 241, 234, 0.9); } /* Player area default bg */
+            50% { background-color: var(--blood-red); } /* Solid red flash */
+        }
+        .player-damage-flash-bg { animation: player-flash-bg-red 0.3s ease-out; }
+
+        @keyframes player-flash-bg-green {
+            0%, 100% { background-color: rgba(244, 241, 234, 0.9); }
+            50% { background-color: rgba(85, 107, 47, 0.35); }
+        }
+        .player-heal-flash-bg { animation: player-flash-bg-green 0.3s ease-out; }
+        
+        @keyframes player-border-pulse-red-anim {
+            0%, 100% { border-color: var(--border-color); box-shadow: none; transform: scale(1); }
+            50% { border-color: var(--blood-red); box-shadow: 0 0 15px rgba(138, 3, 3, 0.6); transform: scale(1.02); }
+        }
+        .player-border-pulse-red { animation: player-border-pulse-red-anim 0.45s ease-in-out; }
+
+        @keyframes player-border-pulse-green-anim {
+            0%, 100% { border-color: var(--border-color); box-shadow: none; transform: scale(1); }
+            50% { border-color: var(--faded-green); box-shadow: 0 0 15px rgba(85, 107, 47, 0.6); transform: scale(1.02); }
+        }
+        .player-border-pulse-green { animation: player-border-pulse-green-anim 0.45s ease-in-out; }
+
+        @keyframes player-area-shake {
+            10%, 90% { transform: translateX(-1px); }
+            20%, 80% { transform: translateX(2px); }
+            30%, 50%, 70% { transform: translateX(-4px); } /* Increased shake intensity */
+            40%, 60% { transform: translateX(4px); } /* Increased shake intensity */
+        }
+        .player-area-shake-effect { animation: player-area-shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+
+
+        @keyframes threat-card-shake-damage-bg-anim {
+            0%, 100% { transform: rotate(0deg) scale(1); background-color: var(--paper-bg); }
+            25% { transform: rotate(-4deg) translateX(-8px) scale(1.05); }
+            50% { background-color: rgba(138, 3, 3, 0.2); }
+            75% { transform: rotate(4deg) translateX(8px) scale(1.05); }
+        }
+        .threat-card-shake-damage-bg { animation: threat-card-shake-damage-bg-anim 0.4s ease-out; }
+        
+        @keyframes threat-card-border-pulse-red-anim {
+            0%, 100% { border-color: var(--ink-main); box-shadow: 3px 3px 8px rgba(0,0,0,0.2); }
+            50% { border-color: var(--blood-red); box-shadow: 0 0 15px 5px rgba(138, 3, 3, 0.5); }
+        }
+        .threat-card-border-pulse-red { animation: threat-card-border-pulse-red-anim 0.45s ease-in-out; }
+
+        @keyframes gold-flash {
+            0%, 100% { transform: scale(1); color: var(--tarnished-gold); }
+            50% { transform: scale(1.2); color: #f59e0b; }
+        }
+        .gold-gained { animation: gold-flash 0.5s ease-out; display: inline-block; }
+        
+        @keyframes skunk_spray_player_area {
+            0% { filter: blur(0px) hue-rotate(0deg); transform: scale(1); }
+            2.5% { filter: blur(1px) hue-rotate(-10deg); transform: scale(1.01); background-color: rgba(100, 200, 100, 0.1); } /* 25% of 1.5s = 0.375s. 25% of 10s = 2.5s */
+            5% { filter: blur(2px) hue-rotate(0deg); transform: scale(1.02); background-color: rgba(80, 180, 80, 0.2); } /* 50% of 1.5s = 0.75s. 50% of 10s = 5s */
+            7.5% { filter: blur(1px) hue-rotate(10deg); transform: scale(1.01); background-color: rgba(100, 200, 100, 0.1); } /* 75% of 1.5s = 1.125s. 75% of 10s = 7.5s */
+            10%, 100% { filter: blur(0px) hue-rotate(0deg); transform: scale(1); } /* Ensure it holds at the end */
+        }
+        .player-skunk-spray-effect {
+            animation: skunk_spray_player_area 10s ease-in-out; /* Updated duration */
+        }
+
+        /* Legacy Animations (kept if still used by OverlayEffects or other logic) */
+        @keyframes trap-caught-small-event {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            40% { transform: scale(0.8) rotate(5deg); opacity: 0.7; }
+            100% { transform: scale(0.2) rotate(15deg) translateY(20px); opacity: 0; }
+        }
+        .event-trapped-small { animation: trap-caught-small-event 0.7s ease-out forwards; }
+
+        @keyframes trap-display-interact {
+            0%, 100% { background-color: white; color: initial; transform: scale(1); box-shadow: none;}
+            50% { background-color: var(--tarnished-gold); color: var(--paper-bg); font-weight: bold; transform: scale(1.1); box-shadow: 0 0 8px var(--tarnished-gold); }
+        }
+        .trap-display-activated { animation: trap-display-interact 0.6s ease-in-out; }
+
+        @keyframes player-illness-pulse {
+            0%, 100% { background-color: rgba(244, 241, 234, 0.9); box-shadow: none; }
+            50% { background-color: var(--puke-yellow); opacity: 0.7; box-shadow: 0 0 15px color-mix(in srgb, var(--puke-yellow) 40%, transparent); }
+        }
+        .player-is-ill { animation: player-illness-pulse 0.8s ease-in-out 2; }
+
+        @keyframes player-scarlet-fever-flash-bg {
+            0%, 100% { background-color: rgba(244, 241, 234, 0.9); } /* Player area default bg */
+            50% { background-color: var(--scarlet-fever-color); } /* Scarlet/purple flash */
+        }
+        .player-scarlet-fever-effect { animation: player-scarlet-fever-flash-bg 0.5s ease-out 2; } /* Flash twice for emphasis */
+
+        @keyframes hat-saved-player-bg {
+            0%, 100% { background-color: rgba(244, 241, 234, 0.9); border-color: var(--border-color); }
+            50% { background-color: rgba(200, 164, 21, 0.25); border-color: var(--tarnished-gold); box-shadow: 0 0 10px rgba(200,164,21,0.5); transform: scale(1.02); }
+        }
+        .player-hat-saved-damage { animation: hat-saved-player-bg 0.5s ease-out; }
+        
+        @keyframes threat-attacks-player-anim {
+            0%, 100% { transform: scale(1) rotate(0deg); box-shadow: 3px 3px 8px rgba(0,0,0,0.2); }
+            20%, 60% { transform: translateX(-6px) rotate(-3deg) scale(1.05); }
+            40%, 80% { transform: translateX(6px) rotate(3deg) scale(1.05); }
+            50% { box-shadow: 0 0 18px 6px var(--blood-red); background-color: rgba(138, 3, 3, 0.1); }
+        }
+        .threat-attacks-player { animation: threat-attacks-player-anim 0.8s ease-in-out; }
+        
+        .log-area::-webkit-scrollbar { width: 8px; }
+        .log-area::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 2px; }
+        .log-area::-webkit-scrollbar-thumb { background: var(--ink-secondary); border-radius: 2px; }
+        .log-area::-webkit-scrollbar-thumb:hover { background: var(--ink-main); }
+
+        .modal-body::-webkit-scrollbar { width: 8px; }
+        .modal-body::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 2px; }
+        .modal-body::-webkit-scrollbar-thumb { background: var(--ink-secondary); border-radius: 2px; }
+        .modal-body::-webkit-scrollbar-thumb:hover { background: var(--ink-main); }
+
+        /* Base Button Styles */
+        .button {
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem; /* Tailwind 'rounded' */
+            font-family: 'Special Elite', monospace;
+            text-transform: uppercase;
+            font-size: 0.875rem; /* Tailwind 'text-sm' */
+            letter-spacing: 0.05em; /* Tailwind 'tracking-wider' */
+            border: 1px solid var(--ink-main);
+            background-color: var(--paper-bg);
+            color: var(--ink-main);
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.1s ease-out;
+            cursor: pointer;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1); /* Tailwind 'shadow' */
+            text-align: center;
+        }
+        .button:hover {
+            background-color: var(--ink-main);
+            color: var(--paper-bg);
+            border-color: var(--ink-main);
+            transform: translateY(-1px);
+        }
+        .button:active {
+            transform: translateY(0px);
+        }
+        .button:disabled,
+        .button[disabled] {
+            background-color: #cccccc !important; 
+            color: #666666 !important;
+            border-color: #aaaaaa !important;
+            cursor: not-allowed !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        .card-back {
+            background-image: url('https://i.imgur.com/uGZWKxM.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 2px solid var(--ink-main); /* Match card face border */
+            border-radius: 0.25rem; /* Tailwind 'rounded', matches card face */
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.2); /* Match card face shadow */
+        }
+        
+        #laudanumEffectOverlay {
+            transition: opacity 1s ease-in-out; /* 1s fade in, 1s fade out */
+        }
+
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "@google/genai": "https://esm.sh/@google/genai@1.4.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="p-2 sm:p-4">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
