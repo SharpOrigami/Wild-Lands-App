@@ -1,30 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
+    "target": "ESNext",
     "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-    "allowJs": true,
-    "jsx": "react-jsx",
-
-    /* Linting */
+    "jsx": "react-jsx", // Or "react-jsxdev" for development
+    "esModuleInterop": true,
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
-
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "noEmit": true, // esbuild will handle emitting files
+    "baseUrl": "./",
     "paths": {
-      "@/*" :  ["./*"]
+      "react": ["./node_modules/@types/react"] // Helps editor find React types
     }
-  }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }
