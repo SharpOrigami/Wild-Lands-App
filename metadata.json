@@ -1,0 +1,6 @@
+{
+  "name": "Closest yet - Wild Lands",
+  "description": "A React and Tailwind CSS-based single-player card game set in the Wild West, where players choose a character, manage resources, and face various events and threats. Features dynamic card play, store interactions, and AI-generated story elements.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
