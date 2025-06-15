@@ -9,3 +9,4 @@
     "typescript": "^5.x.x" // Use the version you installed
   }
 }
+"build": "esbuild index.tsx --bundle --outfile=dist/bundle.js --format=esm --jsx=react-jsx --platform=browser --define:process.env.NODE_ENV='\"production\"' --define:process.env.API_KEY=\"\\\"$GEMINI_API_KEY\\\"\""
