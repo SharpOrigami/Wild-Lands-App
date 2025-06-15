@@ -71,10 +71,10 @@ export function getCardValues(card: CardData, context: CardContext, playerDetail
 }
 
 export function calculateAttackPower(card: CardData, playerDetails: PlayerDetails, source: CardContext, activeEvent: CardData | null): number {
-    // Diagnostic Log - REMOVED
-    // console.log('[DEBUG] calculateAttackPower called. Weapon:', card.id, 'Source:', source);
-    // console.log('[DEBUG] Equipped Items for calc:', playerDetails.equippedItems.map(c => c.id));
-    // console.log('[DEBUG] Hand Items for calc:', playerDetails.hand.filter(c => c !== null).map(c => c!.id));
+    // Diagnostic Log
+    console.log('[DEBUG] calculateAttackPower called. Weapon:', card.id, 'Source:', source);
+    console.log('[DEBUG] Equipped Items for calc:', playerDetails.equippedItems.map(c => c.id));
+    console.log('[DEBUG] Hand Items for calc:', playerDetails.hand.filter(c => c !== null).map(c => c!.id));
 
 
     if (!card.effect || (card.effect.type !== 'weapon' && card.effect.type !== 'conditional_weapon')) return 0;
@@ -135,7 +135,7 @@ export function calculateAttackPower(card: CardData, playerDetails: PlayerDetail
         attackPower *= 2;
     }
 
-    // console.log('[DEBUG] Calculated Attack Power for', card.id, ':', attackPower); // REMOVED
+    console.log('[DEBUG] Calculated Attack Power for', card.id, ':', attackPower);
     return attackPower;
 }
 
