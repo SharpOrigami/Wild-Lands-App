@@ -56,11 +56,11 @@ const OverlayEffectsComponent: React.FC<OverlayEffectsProps> = ({
   useEffect(() => {
     if (finalOutcome) {
       setShowEndGameOverlay(true);
-      const delay = finalOutcome.status === 'victory' ? 500 : 1500;
-      const timer = setTimeout(() => setShowEndGameBannerText(true), delay); // Use renamed state setter
+      const delay = finalOutcome.status === 'victory' ? 500 : 1500; // Defeat ("You Died") text can appear after its black screen establishes
+      const timer = setTimeout(() => setShowEndGameBannerText(true), delay); 
       return () => clearTimeout(timer);
     } else {
-      setShowEndGameBannerText(false); // Use renamed state setter
+      setShowEndGameBannerText(false); 
       setShowEndGameOverlay(false);
     }
   }, [finalOutcome]); 
@@ -104,8 +104,8 @@ const OverlayEffectsComponent: React.FC<OverlayEffectsProps> = ({
                     ${showEndGameOverlay ? (finalOutcome?.status === 'victory' ? 'opacity-80 duration-500' : 'opacity-100 duration-[1500ms]') : 'opacity-0 duration-500'}`}
       />
       
-      {/* End Game Banner Text ("Victory!" / "You Died") */}
-      {finalOutcome && (
+      {/* End Game Banner Text - "Victory!" or "You Died" */}
+      {finalOutcome && (finalOutcome.status === 'victory' || finalOutcome.status === 'defeat') && (
         <div 
           id="endGameBannerContainer" 
           className={`fixed inset-0 flex items-center justify-center pointer-events-none z-[1003] transition-opacity
@@ -116,7 +116,7 @@ const OverlayEffectsComponent: React.FC<OverlayEffectsProps> = ({
               className={`font-western text-[clamp(5rem,15vw,12rem)] ${finalOutcome.status === 'victory' ? 'text-green-500' : 'text-red-500'}`}
               style={{ textShadow: '2px 2px 0px var(--paper-bg), 4px 4px 0px rgba(0,0,0,0.2)' }}
           >
-            {finalOutcome.reason} {/* Displays "Victory!" or the specific defeat reason */}
+            {finalOutcome.status === 'victory' ? finalOutcome.reason : "You Died"}
           </h1>
         </div>
       )}
